@@ -23,7 +23,7 @@ testErrors = dict()
 for i in np.arange(1, 11):
 
     pTrain = degexpand(xTrain, i)
-    w = np.linalg.pinv(pTrain) * tTrain
+    w = np.dot(np.linalg.pinv(pTrain), tTrain)
 
     trainDifference = tTrain - np.transpose(np.dot(np.transpose(w), np.transpose(pTrain)))
     trainError = np.sqrt(np.mean(np.square(trainDifference)))
@@ -38,7 +38,7 @@ for i in np.arange(1, 11):
 # Produce a plot of results.
 plt.plot([float(k) for k in trainErrors.keys()], [float(v) for v in trainErrors.values()])
 plt.plot([float(k) for k in testErrors.keys()], [float(v) for v in testErrors.values()])
-plt.ylabel('t')
+plt.ylabel('Error')
 plt.legend(['Training error', 'Test error'])
 plt.title('Fig degree %d polynomial' % 5)
 plt.xlabel('Polynomial degree')
