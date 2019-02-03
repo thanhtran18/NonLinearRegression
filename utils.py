@@ -44,4 +44,3 @@ def normalizeData(X):
     
     X = (X - mu) / sig # python broadcasting
     return X
-    
