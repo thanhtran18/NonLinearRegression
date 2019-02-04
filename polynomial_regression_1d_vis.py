@@ -1,12 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Sep 26 16:17:49 2016
-
-@author: linhb
-"""
-
-# !/usr/bin/env python
-
 import utils as utils
 import numpy as np
 import matplotlib.pyplot as plt
@@ -31,7 +22,12 @@ testErrors = dict()
 
 xTrainFeature = xTrain[:, 2].reshape(100, 1)
 xTestFeature = xTest[:, 2].reshape(292, 1)
-degrees = [2, 9, 10]
+degrees = [1, 2, 10, 50]
+
+
+def predict(x, w, deg):
+    return np.dot(x.reshape(x.shape[0], 1), np.transpose(w.reshape(w.shape[0], 1) ** deg))
+
 # calculate train and test error for each feature with polynominal degree = 0
 for i in degrees:
 # index = 2
@@ -55,9 +51,10 @@ for i in degrees:
 
     x_ev = np.arange(xTrainFeature.min(), xTrainFeature.max() + 0.1, 0.1)
     rows = (xTrainFeature.max() + 0.1 - xTrainFeature.min())/0.1
-    y_ev = np.arange(w.min(), w.max() + 0.1, (w.max() + 0.1 - w.min())/rows)  # put your regression estimate here
+    # y_ev = np.arange(np.dot(x), w.max() + 0.1, (w.max() + 0.1 - w.min())/rows)  # put your regression estimate here
+    y_ev = np.dot(x_ev.reshape(x_ev.shape[0], 1), np.transpose(w.reshape(w.shape[0], 1)))
 
-    plt.plot(x_ev, y_ev, 'r.-')
+    plt.plot(x_ev, predict(x_ev, w, i), 'r.-')
     plt.plot(xTrainFeature, tTrain, 'gx', markersize=10)
     plt.plot(xTestFeature, tTest, 'bo', markersize=10, mfc='none')
 
