@@ -16,28 +16,30 @@ xTrain = X_n[np.arange(0, TRAIN_SIZE), :]  # training input data
 tTrain = t[np.arange(0, TRAIN_SIZE)]  # trainint output data
 xTest = X_n[np.arange(TRAIN_SIZE, X_n.shape[0]), :]  # testing input data
 tTest = t[np.arange(TRAIN_SIZE, X_n.shape[0])]  # testing output data
-tTest = tTest.reshape(292, 1)
+#tTest = tTest.reshape(292, 1)
 
-trainErrors = dict()
-testErrors = dict()
+trainErrors = [0] * 10
+testErrors = [0] * 10
 for i in np.arange(1, 11):
 
     pTrain = degexpand(xTrain, i)
-    w = np.dot(np.linalg.pinv(pTrain), tTrain)
+    w = np.dot(np.linalg.pinv(np.dot(np.transpose(pTrain), pTrain)), np.dot(np.transpose(pTrain), tTrain))
 
-    trainDifference = tTrain - np.transpose(np.dot(np.transpose(w), np.transpose(pTrain)))
-    trainError = np.sqrt(np.mean(np.square(trainDifference)))
+    trainDifference = np.dot(pTrain, w) - tTrain
+    trainError = (np.mean(np.square(trainDifference)))
 
     pTest = degexpand(xTest, i)
-    testDifference = tTest - np.transpose(np.dot(np.transpose(w), np.transpose(pTest)))
-    testError = np.sqrt(np.mean(np.square(testDifference)))
+    testDifference = np.dot(pTest, w) - tTest
+    testError = (np.mean(np.square(testDifference)))
 
-    trainErrors[i] = trainError
-    testErrors[i] = testError
+    trainErrors[i-1] = trainError
+    testErrors[i-1] = testError
 
 # Produce a plot of results.
-plt.plot([float(k) for k in trainErrors.keys()], [float(v) for v in trainErrors.values()])
-plt.plot([float(k) for k in testErrors.keys()], [float(v) for v in testErrors.values()])
+# plt.plot([float(k) for k in trainErrors.keys()], [float(v) for v in trainErrors.values()])
+# plt.plot([float(k) for k in testErrors.keys()], [float(v) for v in testErrors.values()])
+plt.plot(range(1, 11), trainErrors, "r-")
+plt.plot(range(1, 11), testErrors, "b-")
 plt.ylabel('Error')
 plt.legend(['Training error', 'Test error'])
 plt.title('Fig degree %d polynomial' % 5)

@@ -16,17 +16,17 @@ tTest = t[np.arange(TRAIN_SIZE, X_n.shape[0])]  # testing output data
 tTest = tTest.reshape(292, 1)
 
 
-
 trainErrors = dict()
 testErrors = dict()
 
 xTrainFeature = xTrain[:, 2].reshape(100, 1)
 xTestFeature = xTest[:, 2].reshape(292, 1)
-degrees = [1, 2, 10, 50]
+degrees = [1, 2, 10, 12]
 
 
-def predict(x, w, deg):
-    return np.dot(x.reshape(x.shape[0], 1), np.transpose(w.reshape(w.shape[0], 1) ** deg))
+def predict(weights, x, deg):
+    return [weights[i] * x[i] ** deg for i in range(0, w.shape[0] + 1)]
+    # return np.sqrt(np.mean(np.square(testDifference)))
 
 # calculate train and test error for each feature with polynominal degree = 0
 for i in degrees:
@@ -49,12 +49,17 @@ for i in degrees:
     trainErrors[i] = trainError
     testErrors[i] = testError
 
-    x_ev = np.arange(xTrainFeature.min(), xTrainFeature.max() + 0.1, 0.1)
+    x_ev = np.arange(min(xTrainFeature), max(xTrainFeature) + 0.1, 0.1)
+    pEv = utils.degexpand(x_ev.reshape(x_ev.shape[0], 1), i)
+    y_ev = np.dot(pEv, w)
     rows = (xTrainFeature.max() + 0.1 - xTrainFeature.min())/0.1
     # y_ev = np.arange(np.dot(x), w.max() + 0.1, (w.max() + 0.1 - w.min())/rows)  # put your regression estimate here
-    y_ev = np.dot(x_ev.reshape(x_ev.shape[0], 1), np.transpose(w.reshape(w.shape[0], 1)))
+    # y_ev = np.dot(x_ev.reshape(x_ev.shape[0], 1), np.transpose(w.reshape(w.shape[0], 1)))
 
-    plt.plot(x_ev, predict(x_ev, w, i), 'r.-')
+
+    plt.plot(x_ev, y_ev, 'r.-')
+    # plt.plot(np.transpose(x_ev.reshape(x_ev.shape[0], 1)), np.transpose(y_ev.reshape(y_ev.shape[0], 1)), 'r.-')
+    # plt.plot(np.transpose(x_ev.reshape(x_ev.shape[0], 1)), np.transpose(testError.reshape(testError.shape[0], 1)), 'r.-')
     plt.plot(xTrainFeature, tTrain, 'gx', markersize=10)
     plt.plot(xTestFeature, tTest, 'bo', markersize=10, mfc='none')
 
@@ -63,56 +68,5 @@ for i in degrees:
     plt.ylabel('t')
     plt.title('Fig degree %d polynomial' % i)
 
-    # Produce a plot of results.
-    # plt.bar(np.arange(X_n.shape[1]), [float(v) for v in trainErrors.values()], 0.33,
-    #         color='blue',
-    #         label='Train Error')
-    # plt.bar(np.arange(X_n.shape[1]) + 0.33, [float(v) for v in testErrors.values()], 0.33,
-    #         color='green',
-    #         label='Test Error')
-    #
-    # plt.plot([float(k) for k in trainErrors.keys()], [float(v) for v in trainErrors.values()])
-    # plt.plot([float(k) for k in testErrors.keys()], [float(v) for v in testErrors.values()])
-    # # plt.xticks(np.arange(X_n.shape[1]) + 0.33, [('F' + str(k)) for k in trainErrors.keys()])
-    # plt.ylabel('Error')
-    # plt.legend(['Training error', 'Test error'])
-    # plt.title('Using Single Feature')
-    # plt.xlabel('Feature (F)')
+
     plt.show()
-
-
-
-
-
-
-
-
-
-
-
-"""
-x_train = X_n[0:TRAIN_SIZE, 2].reshape(100, 1)
-x_test = X_n[TRAIN_SIZE:, 2].reshape(292, 1)
-
-# Plot a curve showing learned function.
-# Use linspace to get a set of samples on which to evaluate
-x_ev = np.linspace((min(x_train)).item(), (max(x_train)).item(), num=500)
-
-# TO DO:: Put your regression estimate here in place of x_ev.
-theta_train = utils.degexpand(x_train, 3)
-w = np.dot(np.linalg.pinv(theta_train), tTrain)
-theta_ev = utils.degexpand(np.transpose(np.asmatrix(x_ev)), 3)
-y_ev = np.dot(np.transpose(w), np.transpose(theta_ev))
-
-# Evaluate regression on the linspace samples.
-# y_ev = np.random.random_sample(x_ev.shape)
-# y_ev = 100*np.sin(x_ev)
-
-
-plt.plot(x_train, tTrain, 'bo')
-plt.plot(x_test, tTest, 'go')
-plt.plot(x_ev, np.transpose(y_ev), 'r.-')
-plt.legend(['Training data', 'Test data', 'Learned Polynomial'])
-plt.title('A visualization of a regression estimate using random outputs')
-plt.show()
-"""
