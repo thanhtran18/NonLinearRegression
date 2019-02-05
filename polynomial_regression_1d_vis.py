@@ -44,7 +44,7 @@ for i in degrees:
     pTest = utils.degexpand(xTestFeature, i)
     # yTest = np.dot(np.transpose(w), np.transpose(pTest))
     testDifference = tTest - np.transpose(np.dot(np.transpose(w), np.transpose(pTest)))
-    testError = np.sqrt(np.mean(np.square(testDifference)))
+    testError = np.mean(np.square(testDifference))
 
     trainErrors[i] = trainError
     testErrors[i] = testError

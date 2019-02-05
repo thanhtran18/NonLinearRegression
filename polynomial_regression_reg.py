@@ -8,31 +8,32 @@ X_n = utils.normalizeData(X)
 
 TRAIN_SIZE = 100
 X_n = X_n[np.arange(0, TRAIN_SIZE), :]
-targets = targets[np.arange(0, TRAIN_SIZE)]
+X_n = X_n[:, 2].reshape(100, 1)
+targets = targets[np.arange(0, TRAIN_SIZE)].reshape(100, 1)
 
 validationErrorAverage = dict()
 
 
 def crossRegularization(lmd, degree):
-
+    global validationErrorAverage
     validationError = 0
     folds = 10  # size of validation set
     for i in range(0, 10):
-        xValidation = X_n[i * folds:(i + 1) * folds, :]
+        xValidation = X_n[i * folds:(i + 1) * folds]
         tValidation = targets[i * folds:(i + 1) * folds]
 
-        xTrain = np.concatenate((X_n[0:i * folds, :], X_n[(i + 1) * folds:, :]), 0)
+        xTrain = np.concatenate((X_n[0: i * folds], X_n[(i+1) * folds:]))
         tTrain = np.concatenate((targets[0:i * folds], targets[(i + 1) * folds:]), 0)
 
         pTrain = utils.degexpand(xTrain, degree)
-        w = np.linalg.inv(lmd * np.identity(pTrain.shape[1]) + np.transpose(pTrain).dot(pTrain)).dot(np.transpose(pTrain)).dot(tTrain)
+        w = np.dot(np.linalg.inv(np.dot(lmd, np.eye(pTrain.shape[1])) + np.dot(np.transpose(pTrain), pTrain)), np.dot(np.transpose(pTrain), tTrain))
 
         pValue = utils.degexpand(xValidation, degree)
-        yValidation = np.dot(np.transpose(w), np.transpose(pValue))
-        tValidationDifference = tValidation - np.transpose(yValidation)
-        validationError = np.sqrt(np.mean(np.square(tValidationDifference)))
+        yValidation = np.dot(pValue, w)
+        tValidationDifference = yValidation - tValidation
+        valError = np.mean(np.square(tValidationDifference))
 
-        validationError += validationError
+        validationError += valError
 
     validationErrorAverage[lmd] = validationError / 10
 
@@ -43,12 +44,12 @@ for lmdValue in lambdas:
 
 
 # Produce a plot of results.
-label = sorted(validationErrorAverage.keys())
+xLabel = sorted(validationErrorAverage.keys())
 error = []
-for key in label:
-    error.append(validationErrorAverage[key])
+for label in xLabel:
+    error.append(validationErrorAverage[label])
 
-plt.semilogx(label, error)
+plt.semilogx(xLabel, error)
 plt.ylabel('Error')
 plt.legend(['Average Validation error'])
 plt.title('Polynomial degree = 8, 10-fold cross validation regularization')
