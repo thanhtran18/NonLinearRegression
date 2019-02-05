@@ -30,8 +30,7 @@ def crossRegularization(lmd, degree):
 
         pValue = utils.degexpand(xValidation, degree)
         yValidation = np.dot(pValue, w)
-        tValidationDifference = yValidation - tValidation
-        valError = np.mean(np.square(tValidationDifference))
+        valError = np.mean(np.square(yValidation - tValidation))
 
         validationError += valError
 
@@ -43,7 +42,7 @@ for lmdValue in lambdas:
     crossRegularization(lmdValue, 8)
 
 
-# Produce a plot of results.
+# Produce the plot
 xLabel = sorted(validationErrorAverage.keys())
 error = []
 for label in xLabel:

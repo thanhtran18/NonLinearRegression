@@ -16,7 +16,6 @@ xTrain = X_n[np.arange(0, TRAIN_SIZE), :]  # training input data
 tTrain = t[np.arange(0, TRAIN_SIZE)]  # trainint output data
 xTest = X_n[np.arange(TRAIN_SIZE, X_n.shape[0]), :]  # testing input data
 tTest = t[np.arange(TRAIN_SIZE, X_n.shape[0])]  # testing output data
-#tTest = tTest.reshape(292, 1)
 
 trainErrors = [0] * 10
 testErrors = [0] * 10
@@ -35,9 +34,7 @@ for i in np.arange(1, 11):
     trainErrors[i-1] = trainError
     testErrors[i-1] = testError
 
-# Produce a plot of results.
-# plt.plot([float(k) for k in trainErrors.keys()], [float(v) for v in trainErrors.values()])
-# plt.plot([float(k) for k in testErrors.keys()], [float(v) for v in testErrors.values()])
+# Produce a plot of results
 plt.plot(range(1, 11), trainErrors, "r-")
 plt.plot(range(1, 11), testErrors, "b-")
 plt.ylabel('Error')
